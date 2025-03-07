@@ -1,0 +1,7 @@
+sector,subsector,technology,learning_component
+electricity,solar,CSP,CSP
+electricity,solar,PV,PV
+electricity,wind,wind,wind
+elect_td_bld,rooftop_pv,rooftop_pv,rooftop_pv
+electricity,nuclear,Gen_III,nuclear
+electricity,wind,wind_offshore,wind_offshore

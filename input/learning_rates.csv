@@ -1,0 +1,12 @@
+region,learning_component,learning_rate
+USA,PV module,0.2146
+USA,PV utility BOS,0.1446
+USA,PV rooftop BOS,0.145
+USA,CSP,0.0725
+USA,wind,0.1515
+USA,grid_storage,0.1
+USA,nuclear,0.0683
+USA,CCS coal (conv pul),0.12
+USA,CCS coal (IGCC),0.12
+USA,CCS gas (CC),0.12
+USA,wind_offshore,0.088

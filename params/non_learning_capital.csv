@@ -1,0 +1,49 @@
+region,year,sector,subsector,technology,nonlearning_cap
+USA,1975,electricity,solar,CSP_storage,907.2603969230763
+USA,1990,electricity,solar,CSP_storage,907.2603969230763
+USA,2005,electricity,solar,CSP_storage,907.2603969230763
+USA,2010,electricity,solar,CSP_storage,907.2603969230763
+USA,2015,electricity,solar,CSP_storage,907.2603969230763
+USA,2020,electricity,solar,CSP_storage,674.4519415384613
+USA,2025,electricity,solar,CSP_storage,583.5190984615384
+USA,2030,electricity,solar,CSP_storage,517.5773224615384
+USA,2035,electricity,solar,CSP_storage,470.61718615384586
+USA,2040,electricity,solar,CSP_storage,436.64563661538455
+USA,2045,electricity,solar,CSP_storage,413.66438307692306
+USA,2050,electricity,solar,CSP_storage,395.67855323076924
+USA,1975,electricity,coal,coal (conv pul CCS),690.440087076923
+USA,1990,electricity,coal,coal (conv pul CCS),690.440087076923
+USA,2005,electricity,coal,coal (conv pul CCS),690.440087076923
+USA,2010,electricity,coal,coal (conv pul CCS),690.440087076923
+USA,2015,electricity,coal,coal (conv pul CCS),690.440087076923
+USA,2020,electricity,coal,coal (conv pul CCS),671.4555363692307
+USA,2025,electricity,coal,coal (conv pul CCS),620.4960288
+USA,2030,electricity,coal,coal (conv pul CCS),580.5288792
+USA,2035,electricity,coal,coal (conv pul CCS),549.5539774153846
+USA,2040,electricity,coal,coal (conv pul CCS),525.5732752615385
+USA,2045,electricity,coal,coal (conv pul CCS),506.5887245538461
+USA,2050,electricity,coal,coal (conv pul CCS),492.6003252923077
+USA,1975,electricity,coal,coal (IGCC CCS),1088.116203323077
+USA,1990,electricity,coal,coal (IGCC CCS),1088.116203323077
+USA,2005,electricity,coal,coal (IGCC CCS),1088.116203323077
+USA,2010,electricity,coal,coal (IGCC CCS),1088.116203323077
+USA,2015,electricity,coal,coal (IGCC CCS),1088.116203323077
+USA,2020,electricity,coal,coal (IGCC CCS),1164.054891323077
+USA,2025,electricity,coal,coal (IGCC CCS),1115.0954939076921
+USA,2030,electricity,coal,coal (IGCC CCS),1074.1278040615384
+USA,2035,electricity,coal,coal (IGCC CCS),1041.1537624615385
+USA,2040,electricity,coal,coal (IGCC CCS),1014.1764125538461
+USA,2045,electricity,coal,coal (IGCC CCS),993.1938136615385
+USA,2050,electricity,coal,coal (IGCC CCS),975.2076199384613
+USA,1975,electricity,gas,gas (CC CCS),287.7663638769231
+USA,1990,electricity,gas,gas (CC CCS),287.7663638769231
+USA,2005,electricity,gas,gas (CC CCS),287.7663638769231
+USA,2010,electricity,gas,gas (CC CCS),287.7663638769231
+USA,2015,electricity,gas,gas (CC CCS),287.7663638769231
+USA,2020,electricity,gas,gas (CC CCS),247.79921427692307
+USA,2025,electricity,gas,gas (CC CCS),231.8127668307692
+USA,2030,electricity,gas,gas (CC CCS),220.82040886153845
+USA,2035,electricity,gas,gas (CC CCS),212.8282161230769
+USA,2040,electricity,gas,gas (CC CCS),207.83206467692304
+USA,2045,electricity,gas,gas (CC CCS),203.83452492923075
+USA,2050,electricity,gas,gas (CC CCS),201.83606435076922

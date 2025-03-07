@@ -1,0 +1,14 @@
+region,sector,subsector,technology,FCR
+USA,electricity,solar,PV,0.13
+USA,electricity,solar,CSP,0.13
+USA,electricity,wind,wind,0.13
+USA,elect_td_bld,rooftop_pv,rooftop_pv,0.1
+USA,electricity,solar,CSP_storage,0.13
+USA,electricity,solar,PV_storage,0.13
+USA,electricity,wind,wind_storage,0.13
+USA,electricity,nuclear,Gen_II_LWR,0.13
+USA,electricity,nuclear,Gen_III,0.13
+USA,electricity,coal,coal (conv pul CCS),0.13
+USA,electricity,coal,coal (IGCC CCS),0.13
+USA,electricity,gas,gas (CC CCS),0.13
+USA,electricity,wind,wind_offshore,0.13

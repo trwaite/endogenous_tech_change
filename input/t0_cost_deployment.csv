@@ -1,0 +1,12 @@
+region,learning_component,t0_cost,t0_deployment
+USA,PV module,188,25689000
+USA,PV utility BOS,345,14907000
+USA,PV rooftop BOS,566,10782000
+USA,wind,451,55052083
+USA,wind_offshore,1118,1
+USA,CSP,1362,1810800
+USA,CCS coal (conv pul),540,1
+USA,CCS coal (IGCC),718,1
+USA,CCS gas (CC),380,1
+USA,nuclear,1703,105264389
+USA,grid_storage,1228,292000

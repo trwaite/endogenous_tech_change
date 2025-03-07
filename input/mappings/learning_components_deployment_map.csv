@@ -1,0 +1,25 @@
+sector,subsector,technology,learning_component,multiplier
+electricity,solar,CSP,CSP,1
+electricity,solar,CSP_storage,CSP,1
+electricity,solar,PV,PV module,1
+electricity,solar,PV,PV utility BOS,1
+electricity,solar,PV_storage,PV module,1
+electricity,solar,PV_storage,PV utility BOS,1
+electricity,wind,wind,wind,1
+electricity,wind,wind_storage,wind,1
+elect_td_bld,rooftop_pv,rooftop_pv,PV module,1
+elect_td_bld,rooftop_pv,rooftop_pv,PV rooftop BOS,1
+electricity,solar,PV_storage,grid_storage,2
+electricity,wind,wind_storage,grid_storage,2
+electricity,nuclear,Gen_II_LWR,nuclear,1
+electricity,nuclear,Gen_III,nuclear,1
+electricity,coal,coal (conv pul CCS),CCS coal (conv pul),1
+electricity,coal,coal (IGCC CCS),CCS coal (conv pul),1
+electricity,gas,gas (CC CCS),CCS coal (conv pul),1
+electricity,coal,coal (conv pul CCS),CCS coal (IGCC),1
+electricity,coal,coal (IGCC CCS),CCS coal (IGCC),1
+electricity,gas,gas (CC CCS),CCS coal (IGCC),1
+electricity,coal,coal (conv pul CCS),CCS gas (CC),1
+electricity,coal,coal (IGCC CCS),CCS gas (CC),1
+electricity,gas,gas (CC CCS),CCS gas (CC),1
+electricity,wind,wind_offshore,wind_offshore,1
