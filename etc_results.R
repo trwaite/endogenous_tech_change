@@ -1,19 +1,24 @@
+# this script contains some code to analyze results of endogenous tech change
+# experiments run using gcamwrapper.
+
 library(tidyverse)
 
+# constants
 CONV_KWH_EJ <- 3.6e-12
 CONV_KWH_GJ <- 3.6e-3
 hours_per_yr <- 8760
 CONV_KW_GW <- 1e-6
 
+# FCR for converting between generation and capital
 tech_FCR <- read_csv("input/tech_FCR.csv")
 
-db_path <- "C:/GCAM/gcam7_climate_macro/output"
-
+# filepaths
+db_path <- "C:/GCAM/gcam7_climate_macro/output" # path to where databases are stored
 db_names <- c("db_Reference_exogenous",
-              "db_NZ_exogenous", "db_NZ_endogenous_v2")
+              "db_NZ_exogenous", "db_NZ_endogenous_v2") # database names
+query_file <- "ETC_queries.xml" # queries
 
-query_file <- "ETC_queries.xml"
-
+# read databases
 for(db_name in db_names){
   conn <- rgcam::localDBConn(db_path, db_name)
   prj_ETC_results <- rgcam::addScenario(conn, "prj_ETC_results",
@@ -306,11 +311,6 @@ c_price %>%
 ggsave("figures/cPrice_NZ.png",
        width = 6, height = 4, units = "in")
 
-# calculate % diff between scenarios
-c_price_diff <- c_price %>%
-  filter(year >= 2025, year <= 2050) %>%
-  pivot_wider(names_from = "scenario", values_from = "value") %>%
-  mutate(p_diff = (NZ_learning - NZ_noLearning)/NZ_noLearning*100)
 
 
 # GHG emissions ----------------------------------------------------------------
