@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queries>
+
+   <aQuery>
+      <region name="USA"/>
+                <supplyDemandQuery title="elec gen by gen tech and cooling tech (new)">
+                    <axis1 name="technology">technology</axis1>
+                    <axis2 name="Year">physical-output[@vintage]</axis2>
+                    <xPath buildList="true" dataName="output" group="false" sumAll="false"> *[@type='sector' and (@name='electricity' or @name='elect_td_bld' or
+                  contains(@name,'elec_')) and not(contains(@name, 'water_td'))]/
+                  *[@type='subsector' and not (@name='elect_td_bld')]/
+                  *[@type='technology' and not(@name='biomass (conv)' or @name='biomass (conv CCS)' or @name='biomass (IGCC)' or @name='biomass (IGCC CCS)'
+                                   or @name='coal (conv pul)' or @name='coal (conv pul CCS)' or @name='coal (IGCC)' or @name='coal (IGCC CCS)'
+                                   or @name='gas (steam/CT)' or @name='gas (CC)' or @name='gas (CC CCS)'
+                                   or @name='refined liquids (steam/CT)' or @name='refined liquids (CC)' or @name='refined liquids (CC CCS)'
+                                   or @name='geothermal' or @name='Gen_II_LWR' or @name='Gen_III'
+                                   or @name='CSP' or @name='CSP_storage')]/
+                  *[@type='output']/physical-output[
+               @vintage=parent::*/parent::*/@year]/node()
+               </xPath>
+                    <comments/>
+                </supplyDemandQuery>
+    </aQuery>
+
+   <aQuery>
+     <region name="USA"/>
+			<supplyDemandQuery title="elec capacity factors">
+			    <axis1 name="technology">technology</axis1>
+			    <axis2 name="Year">technology</axis2>
+			    <xPath buildList="true" dataName="capacity-factor" group="false" sumAll="false">*[@type='sector']/*[@type='subsector']/
+              *[@type='technology']/capacity-factor/node()</xPath>
+			    <comments/>
+			</supplyDemandQuery>
+   </aQuery>
+   
+   
+   <aQuery>
+     <region name="USA"/>
+                <supplyDemandQuery title="elec gen costs by tech">
+                <axis1 name="technology">technology</axis1>
+                <axis2 name="Year">price-paid[@vintage]</axis2>
+                <xPath buildList="true" dataName="fuel cost" group="false" sumAll="false">*[@type = 'sector' and (@name='electricity' or @name='elect_td_bld' or
+                  contains(@name,'elec_')) and not(contains(@name, 'water_td'))]/*[@type = 'subsector']/*[@type = 'technology']/
+            *[@type='input']/price-paid[@vintage=parent::*/parent::*/@year]/text()</xPath>
+					<showAttribute attribute-name="year" level="technology"/>
+                </supplyDemandQuery>
+   </aQuery>
+   
+
+
+</queries>

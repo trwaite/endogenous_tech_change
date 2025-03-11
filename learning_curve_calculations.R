@@ -1,5 +1,14 @@
+# this script uses a reference scenario GCAM run to calculate calibration
+# adders for endogenous technology costs
+
 library(tidyverse)
 
+# filepaths
+db_dir <- "C:/GCAM/gcam7_climate_macro/output" # filepath to reference scenario database
+ref_db_name <- "db_Reference_exogenous" # reference scenario database name
+query_file <- "endo_tech_change_queries.xml" # queries
+
+# read in inputs
 learning_rates <- read_csv("input/learning_rates.csv")
 tech_FCR <- read_csv("input/tech_FCR.csv")
 cooling_tech_map <- read_csv("input/mappings/cooling_tech_map.csv")
@@ -7,50 +16,32 @@ learning_components_deployment_map <- read_csv("input/mappings/learning_componen
 learning_components_learning_map <- read_csv("input/mappings/learning_components_learning_map.csv")
 t0_cost_deployment <- read_csv("input/t0_cost_deployment.csv")
 
+# constants
 CONV_KWH_EJ <- 3.6e-12
 CONV_KWH_GJ <- 3.6e-3
 hours_per_yr <- 8760
-
 conv_USD_2015_1975 <- 0.285
 
 
 # get costs and cumulative capacities from the reference run
-
-db_dir <- "C:/GCAM/gcam7_climate_macro/output"
-ref_db_name <- "db_Reference_exogenous"
-
-query_file <- "endo_tech_change_queries.xml"
-
-
 conn <- rgcam::localDBConn(db_dir, ref_db_name)
 prj_etc <- rgcam::addScenario(conn, "prj_etc", queryFile = query_file,
                               clobber = T)
 
 
-# new vintage generation
+# query new vintage generation
 elec_gen_tech_new <- rgcam::getQuery(prj_etc,
                                      "elec gen by gen tech and cooling tech (new)") %>%
   rename(generation = value)
 
-# levelized capital costs
+# query levelized capital costs
 elec_cap_costs <- rgcam::getQuery(prj_etc, "elec gen costs by tech") %>%
   filter(input == "capital") %>%
   separate(technology, into = c("technology", "vintage"), sep = "=") %>%
   mutate(technology = gsub(",year", "", technology),
          vintage = as.numeric(vintage))
 
-# figure showing PV capital costs over time
-elec_cap_costs %>%
-  filter(technology == "PV", year >= 2015) %>%
-  ggplot(aes(x = year, y = value)) +
-  geom_line() +
-  theme_bw() +
-  xlab("Year") + ylab("Levelized capital cost (1975$/GJ)")
-
-ggsave("figures/exogneous_pv_capital_costs.png",
-       width = 4, height = 3.5, units = "in")
-
-# capacity factors
+# query capacity factors
 elec_cap_factors <- rgcam::getQuery(prj_etc, "elec capacity factors") %>%
   rename(cap_factor = value)
 
@@ -64,7 +55,7 @@ new_capacity <- elec_gen_tech_new %>%
   # calculate new capacity
   mutate(capacity = generation/CONV_KWH_EJ/hours_per_yr/cap_factor)
 
-# aggregate new capacities to learning components
+# aggregate new capacities from GCAM technologies to learning components
 new_capacity_learning_components <- new_capacity %>%
   # map cooling techs to pass thru techs
   left_join(cooling_tech_map,
@@ -81,10 +72,10 @@ new_capacity_learning_components <- new_capacity %>%
   group_by(scenario, region, learning_component, year) %>%
   summarize(capacity = sum(capacity*multiplier)) %>%
   ungroup() %>%
-  # NAs occur when there's no deployment in the ref scenario (CCS)
+  # NAs occur when there's no deployment in the ref scenario (e.g., CCS)
   drop_na()
 
-# calculate cumulative capacities
+# calculate cumulative capacities of learning components
 cum_capacity_learning_components <- new_capacity_learning_components %>%
   # fill in missing years with 0s
   complete(year, nesting(scenario, region, learning_component)) %>%
@@ -94,17 +85,6 @@ cum_capacity_learning_components <- new_capacity_learning_components %>%
   arrange(year) %>%
   mutate(cum_cap = cumsum(capacity)) %>%
   ungroup()
-
-
-# convert capital inputs to overnight capital costs (1975$/kW)
-# for all GCAM technologies
-elec_cap_costs_overnight <- elec_cap_costs %>%
-  left_join(elec_cap_factors,
-            by = c("scenario", "region", "sector", "subsector", "technology", "year")) %>%
-  right_join(tech_FCR, by = c("region", "sector", "subsector", "technology")) %>%
-  mutate(cap_cost = value/FCR*hours_per_yr*cap_factor*CONV_KWH_GJ) %>%
-  select(scenario, region, sector, subsector, technology, year, cap_cost)
-
 
 # apply learning curves to cumulative deployment of learning components
 learned_costs_learning_component <- cum_capacity_learning_components %>%
@@ -119,14 +99,12 @@ learned_costs_learning_component <- cum_capacity_learning_components %>%
   filter(year > 2015) %>%
   select(scenario, region, year, learning_component, learned_cost)
 
-
-# map back to GCAM technologies
+# map endogenous costs back to GCAM technologies
 learned_costs_GCAM_tech <- learned_costs_learning_component %>%
   left_join(learning_components_learning_map, by = c("learning_component")) %>%
   group_by(scenario, region, year, sector, subsector, technology) %>%
   summarize(learned_cost = sum(learned_cost, na.rm = T)) %>%
   ungroup()
-
 
 
 # for technologies with non-learning components,
@@ -173,10 +151,20 @@ write_csv(non_learning_capital_all,
 
 # calculate exogenous calibration adders
 
-# compare with GCAM default costs
+# convert exogenous capital inputs to overnight capital costs (1975$/kW)
+# for all GCAM technologies
+elec_cap_costs_overnight <- elec_cap_costs %>%
+  left_join(elec_cap_factors,
+            by = c("scenario", "region", "sector", "subsector", "technology", "year")) %>%
+  right_join(tech_FCR, by = c("region", "sector", "subsector", "technology")) %>%
+  mutate(cap_cost = value/FCR*hours_per_yr*cap_factor*CONV_KWH_GJ) %>%
+  select(scenario, region, sector, subsector, technology, year, cap_cost)
+
+# compare endogenous costs with GCAM default costs
 tech_costs_compare <- learned_costs_GCAM_tech %>%
   left_join(elec_cap_costs_overnight,
             by = c("scenario", "region", "year", "sector", "subsector", "technology")) %>%
+  # add non-learning capital to endogenous costs
   left_join(non_learning_capital_all,
             by = c("region", "year", "sector", "subsector", "technology")) %>%
   replace_na(list(nonlearning_cap = 0)) %>%
@@ -185,6 +173,8 @@ tech_costs_compare <- learned_costs_GCAM_tech %>%
   pivot_longer(c(learned_cost, cap_cost, learned_cost_total),
                names_to = "source", values_to = "value")
 
+# calculate calibration adders as the difference between the GCAM default
+# exogenous cost and the endogenous cost (+ non-learning capital)
 calibration_adders <- tech_costs_compare %>%
   filter(year >= 2020) %>%
   pivot_wider(names_from = "source", values_from = "value") %>%
@@ -200,8 +190,7 @@ write_csv(calibration_adders, "params/cal_adders.csv")
 
 
 
-# plot calibration
-
+# plot showing calibration
 plot_calib  <-
   tech_costs_compare %>%
   filter(source != "learned_cost", value > 0,
@@ -227,25 +216,3 @@ ggplot() +
 ggsave("figures/tech_calibration.png",
        width = 10, height = 5, units = "in")
 
-
-# subset of technologies for all hands slides
-ggplot() +
-  geom_line(data = tech_costs_compare %>%
-              filter(source != "learned_cost", value > 0,
-                     technology %in% c("wind", "PV", "wind_storage", "PV_storage"),
-                     !(grepl("storage", technology) & year == 2020)) %>%
-              mutate(source = if_else(source == "cap_cost", "GCAM default",
-                                      "Learning curve\noutput (Ref)")),
-            aes(x = year, y = value, color = source)) +
-  geom_segment(data = plot_calib %>%
-                 filter(technology %in% c("wind", "PV", "wind_storage", "PV_storage")),
-               aes(x = year, xend = year, y = cap_cost, yend = learned_cost_total),
-               lty = 3) +
-  expand_limits(y = 0) +
-  scale_color_discrete(name = "") +
-  theme_bw() +
-  facet_wrap(~technology, scales = "fixed", nrow = 2) +
-  ylab("Capital cost (1975$/kW)")
-
-ggsave("figures/tech_calibration_subset.png",
-       width = 7, height = 5, units = "in")
