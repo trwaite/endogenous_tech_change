@@ -1,44 +1,46 @@
-setwd("C:/GCAM/gcamwrapper")
-
 library(dplyr)
 library(tidyr)
 
-source("env.R")
-devtools::load_all()
+# set paths and constants
+gcamwrapper_path <- "C:/GCAM/gcamwrapper" # location of gcamwrapper package
+config_filename <- "configuration_Reference_NZ_endogenous.xml" # filename of config to run
+config_path <- "C:/GCAM/gcam7_climate_macro/exe" # location of config file above
+db_location <- "./output" # where to write the database
 
 CONV_KWH_EJ <- 3.6e-12
 CONV_KWH_GJ <- 3.6e-3
 hours_per_yr <- 8760
 
 # read in input data and mappings
-
 learning_rates <-
-  as_tibble(read.csv("C:/Users/wait467/OneDrive - PNNL/Desktop/climate-macro-local/endo_tech_change/input/learning_rates.csv"))
+  as_tibble(read.csv("input/learning_rates.csv"))
 
 initial_conditions <-
-  as_tibble(read.csv("C:/Users/wait467/OneDrive - PNNL/Desktop/climate-macro-local/endo_tech_change/input/t0_cost_deployment.csv"))
+  as_tibble(read.csv("input/t0_cost_deployment.csv"))
 
 cal_adders <-
-  as_tibble(read.csv("C:/Users/wait467/OneDrive - PNNL/Desktop/climate-macro-local/endo_tech_change/params/cal_adders.csv"))
+  as_tibble(read.csv("params/cal_adders.csv"))
 
 cooling_tech_map <-
-  as_tibble(read.csv("C:/Users/wait467/OneDrive - PNNL/Desktop/climate-macro-local/endo_tech_change/input/mappings/cooling_tech_map.csv"))
+  as_tibble(read.csv("input/mappings/cooling_tech_map.csv"))
 
 learning_components_deployment_map <-
-  as_tibble(read.csv("C:/Users/wait467/OneDrive - PNNL/Desktop/climate-macro-local/endo_tech_change/input/mappings/learning_components_deployment_map.csv"))
+  as_tibble(read.csv("input/mappings/learning_components_deployment_map.csv"))
 
 learning_components_learning_map <-
-  as_tibble(read.csv("C:/Users/wait467/OneDrive - PNNL/Desktop/climate-macro-local/endo_tech_change/input/mappings/learning_components_learning_map.csv"))
+  as_tibble(read.csv("input/mappings/learning_components_learning_map.csv"))
 
-tech_FCR <- read.csv("C:/Users/wait467/OneDrive - PNNL/Desktop/climate-macro-local/endo_tech_change/input/tech_FCR.csv")
+tech_FCR <- read.csv("input/tech_FCR.csv")
 
 non_learning_capital <-
-  as_tibble(read.csv("C:/Users/wait467/OneDrive - PNNL/Desktop/climate-macro-local/endo_tech_change/params/non_learning_capital.csv"))
+  as_tibble(read.csv("params/non_learning_capital.csv"))
 
-# Create a Gcam instance by giving it a configuration file and the
-# appropriate working directory
-g <- create_and_initialize("configuration_Reference_NZ_endogenous.xml", "C:/GCAM/gcam7_climate_macro/exe")
-#g <- create_and_initialize("configuration_Reference.xml", "C:/GCAM/gcam7_climate_macro/exe")
+# load gcamwrapper
+source(paste0(gcamwrapper_path, "/env.R"))
+devtools::load_all(gcamwrapper_path)
+
+# Create a GCAM instance by providing a configuration file
+g <- create_and_initialize(config_filename, config_path)
 
 # queries
 elec_gen_tech_query <- "world/region{region@name}/sector[+NamedFilter,StringEquals,electricity]/subsector{subsector@name}/technology{tech@name}/period{vintage@year}/output{output@name}/physical-output{year@year}"
@@ -170,5 +172,7 @@ while (get_current_period(g) <= 10) {
 
 }
 
-#print_xmldb(g, xmldb_location = "./output")
+# write database of results (note: this may not work locally depending on
+# issues with gcamwrapper setup)
+#print_xmldb(g, xmldb_location = db_location)
 
